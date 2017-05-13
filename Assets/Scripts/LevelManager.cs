@@ -38,15 +38,14 @@ public class LevelManager : MonoBehaviour {
 	}
 
 
-	public void EnterRoom (Vector2 direction, Vector2 position)
+	public void EnterRoom (Vector2 direction, Vector2 roomPosition)
 	{
-		Vector2 pos = position + direction * currentLevel.size;
 		currentLevel.Delete();
-		if (!levels.ContainsKey (pos)) {
-			GenerateLevel (pos);		
+		if (!levels.ContainsKey (roomPosition)) {
+			GenerateLevel (roomPosition);		
 		} else {
 
-			currentLevel = levels [pos];
+			currentLevel = levels [roomPosition];
 			currentLevel.reBuild ();
 		}
 
