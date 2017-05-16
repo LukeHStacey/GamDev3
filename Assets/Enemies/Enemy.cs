@@ -5,17 +5,31 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour {
     public float speed;
-	// Use this for initialization
+    [SerializeField]
+    private float shootDelay;
+    [SerializeField] private Bullet bullet;
+    // Use this for initialization
 	void Start () {
-		
+	    LastShotTime = Time.time;
 	}
-	
-	// Update is called once per frame
+
+    public float LastShotTime { get; set; }
+
+    // Update is called once per frame
 	void Update () {
 	    PlayerController player = PlayerController.GetPlayerController();
 	    Vector2 direction = (player.transform.position - transform.position);
 	    if (direction.magnitude > 0.1) {
-	        transform.position =  Vector2.Lerp(transform.position, player.transform.position, speed * Time.deltaTime / direction.magnitude);
+	        Rigidbody2D body = GetComponent<Rigidbody2D>();
+	        body.velocity = speed * (player.transform.position - transform.position).normalized;
+	    }
+
+
+	    if (LastShotTime + shootDelay < Time.time) {
+	        LastShotTime = Time.time;
+	        Bullet shot = Instantiate(bullet, transform);
+            shot.transform.localPosition = Vector3.zero;
+	        shot.direction = PlayerController.GetPlayerController().transform.position - transform.position;
 	    }
 	}
 }

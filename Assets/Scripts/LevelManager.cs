@@ -31,8 +31,9 @@ public class LevelManager : MonoBehaviour {
 	}
 
 	private void GenerateLevel(Vector2 position) {
-		currentLevel = Instantiate(levelPrefabs [0]);
-		currentLevel.prefab = levelPrefabs [0];
+	    Level prefab = levelPrefabs[1];
+	    currentLevel = Instantiate(prefab);
+	    currentLevel.prefab = prefab;
 		currentLevel.position = position;
 		levels.Add (position, currentLevel);
 	}
