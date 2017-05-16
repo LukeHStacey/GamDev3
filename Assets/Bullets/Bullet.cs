@@ -36,10 +36,4 @@ public class Bullet : MonoBehaviour {
         }
     }
 
-    void OnTriggerExit2D(Collider2D other) {
-        Debug.Log(other);
-    }
-
-
-
 }

@@ -93,7 +93,8 @@ public class Level : MonoBehaviour {
     }
 
     public void EnterTeleporter(Vector2 direction) {
-        Vector2 pos = CombineVectors(direction, dimensions) + position;
+        //Vector2 pos = CombineVectors(direction, dimensions) + position;
+        Vector2 pos = direction + position;
         LevelManager.GetLevelManager().EnterRoom(direction, pos);
     }
 
