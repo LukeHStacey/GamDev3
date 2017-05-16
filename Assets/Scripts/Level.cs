@@ -67,8 +67,8 @@ public class Level : MonoBehaviour {
 
 
     public void reBuild() {
-        foreach(Transform child in prefab.transform) {
-            Instantiate(child.gameObject, transform);
+        foreach(Transform child in transform) {
+            child.gameObject.SetActive(true);
         }
         GenerateFloor();
         GenerateWalls();
@@ -78,7 +78,7 @@ public class Level : MonoBehaviour {
 
     public void Delete() {
         foreach(Transform child in transform) {
-            Destroy(child.gameObject);
+            child.gameObject.SetActive(false);
         }
 
     }

@@ -10,7 +10,7 @@ public class Camera : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	public void Update () {
 		Vector3 playerPos = PlayerController.GetPlayerController().transform.position;
 		playerPos.z = -10;
 		transform.position = playerPos;

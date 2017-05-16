@@ -5,14 +5,11 @@ using UnityEngine;
 public class Bullet : MonoBehaviour {
 
     public float speed;
+    public float damage;
     private Vector2 lastpos;
 
-    public Vector2 direction {
-        get { return _direction; }
-        set { _direction = value.normalized; } 
-    }
+    public Vector2 direction { get; set; }
 
-    private Vector2 _direction;
 	// Use this for initialization
 	void Start () {
 	    lastpos = transform.parent.position;
@@ -20,18 +17,18 @@ public class Bullet : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	    transform.position = Vector2.Lerp(lastpos, lastpos +  direction, speed * Time.deltaTime);
+	    transform.position = Vector2.Lerp(lastpos, lastpos +  direction,  Time.deltaTime);
 	    lastpos = transform.position;
 	}
 
 
     void OnTriggerEnter2D(Collider2D other) {
-        Debug.Log(other.name);
         if (other.tag.Equals("Player")) {
+            other.GetComponent<Character>().hitBy(this);
+
             Debug.Log("Hit Player!");
             Destroy(gameObject);
         }else if (other.tag.Equals("Wall")) {
-            Debug.Log("Hit Wall!", other.gameObject );
             Destroy(gameObject);
         }
     }

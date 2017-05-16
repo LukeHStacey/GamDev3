@@ -26,6 +26,12 @@ public class Teleporter : MonoBehaviour {
 		
 	}
 
+    void OnEnable() {
+		timeCreated = Time.time;
+		touchingPlayer = false;
+		active = false;
+    }
+
 	void OnTriggerEnter2D(Collider2D other) {
 		
 		if (other.tag.Equals ("Player")) {
