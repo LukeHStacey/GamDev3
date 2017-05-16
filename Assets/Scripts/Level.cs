@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -37,20 +38,25 @@ public class Level : MonoBehaviour {
     }
 
     private void GenerateFloor() {
-        for (float x = -dimensions.x/2; x < dimensions.x/2; x++) { }
+        for (float x = -(dimensions.x - 3) / 2; x <= (dimensions.x - 3) / 2; x++) {
+            for (float y = -(dimensions.y - 3) / 2; y <= (dimensions.y - 3) / 2; y++) {
+                GameObject floorPiece = Instantiate(floor[0], transform);
+                floorPiece.transform.localPosition = new Vector2(x, y);
+            }
+        }
     }
 
     private void GenerateWalls() {
         for (int i = 0; i < 4; i++) {
             //Place Corners
             GameObject corner = Instantiate(corners[i], transform);
-            corner.transform.localPosition = CombineVectors(directions[i] + directions[(i+1)%4], dimensions/2);
+            corner.transform.localPosition = CombineVectors(directions[i] + directions[(i+1)%4], (dimensions - Vector2.one)/2);
 
 
             //Place Walls
-            Vector2 wallPos = CombineVectors(directions[i], dimensions/2);
+            Vector2 wallPos = CombineVectors(directions[i], (dimensions - Vector2.one)/2);
             Vector2 wallDirection = directions[(i + 1) % 4];
-            int wallLength = (int) wallPos.magnitude;
+            int wallLength = (int) wallPos.magnitude - 1;
             for (int j = -wallLength; j <= wallLength; j++) {
                 GameObject wall = Instantiate(walls[i], transform);
                 wall.transform.localPosition = wallPos + j * wallDirection;
@@ -64,6 +70,9 @@ public class Level : MonoBehaviour {
         foreach(Transform child in prefab.transform) {
             Instantiate(child.gameObject, transform);
         }
+        GenerateFloor();
+        GenerateWalls();
+        GenerateTeleports();
 
     }
 
@@ -79,16 +88,20 @@ public class Level : MonoBehaviour {
             Teleporter tele = Instantiate(teleporterPrefab, this.transform);
             tele.level = this;
             tele.direction = direction;
-            tele.transform.localPosition = CombineVectors(direction, dimensions/2);
+            tele.transform.localPosition = CombineVectors(direction, (dimensions - Vector2.one)/2);
         }
     }
 
     public void EnterTeleporter(Vector2 direction) {
-        Vector2 pos = new Vector2(direction.x * dimensions.x, direction.y * dimensions.y);
+        Vector2 pos = CombineVectors(direction, dimensions) + position;
         LevelManager.GetLevelManager().EnterRoom(direction, pos);
     }
 
     private Vector2 CombineVectors(Vector2 a, Vector2 b) {
         return new Vector2(a.x * b.x, a.y * b.y);
+    }
+
+    public override String ToString() {
+        return "Level: " + position.ToString();
     }
 }

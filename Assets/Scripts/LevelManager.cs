@@ -52,4 +52,9 @@ public class LevelManager : MonoBehaviour {
 		Transform player =  PlayerController.GetPlayerController ().transform;
 		player.position = -(Vector2)player.position;// + direction;
 	}
+
+    void OnGUI() {
+        GUI.Label(new Rect(0,0, 100, 100), currentLevel.ToString() );
+    }
+
 }
