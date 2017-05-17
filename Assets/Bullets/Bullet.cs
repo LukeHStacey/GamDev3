@@ -7,6 +7,8 @@ public class Bullet : MonoBehaviour {
     public float speed;
     public int damage;
     private Vector2 lastpos;
+    private float SpawnTime;
+    public float LifeTime = 5;
 
 
     public Vector2 direction { get; private set; }
@@ -20,14 +22,21 @@ public class Bullet : MonoBehaviour {
         direction.Normalize();
         B bullet = Instantiate(prefab, Shooter);
         bullet.lastpos = (Vector2) Shooter.position + direction/3;
-        bullet.direction = direction* bullet.speed;
+        bullet.direction = direction;
+        bullet.SpawnTime = Time.time;
         return bullet;
     }
 	
 	// Update is called once per frame
 	void Update () {
-	    transform.position = Vector2.Lerp(lastpos, lastpos +  direction,  Time.deltaTime);
-	    lastpos = transform.position;
+	    if (Time.time > SpawnTime + LifeTime) {
+	        Destroy(gameObject);
+	    }
+	    else {
+	        transform.position = Vector2.Lerp(lastpos, lastpos + direction, speed * Time.deltaTime);
+	        lastpos = transform.position;
+	    }
+
 	}
 
 
