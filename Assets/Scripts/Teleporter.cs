@@ -24,6 +24,8 @@ public class Teleporter : MonoBehaviour {
 		if (!active && !touchingPlayer && Time.time > timeCreated + 0.2)
 			active = true;
 		
+        if (Input.GetKeyDown(KeyCode.Space) && touchingPlayer)
+				level.EnterTeleporter (direction);
 	}
 
     void OnEnable() {
@@ -37,7 +39,6 @@ public class Teleporter : MonoBehaviour {
 		if (other.tag.Equals ("Player")) {
 			touchingPlayer = true;
 			if (active) {
-				level.EnterTeleporter (direction);
 			}
 		}
 	}

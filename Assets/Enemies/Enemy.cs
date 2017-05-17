@@ -8,9 +8,14 @@ public class Enemy : Character{
     [SerializeField]
     private float shootDelay;
     [SerializeField] private Bullet bullet;
+    [SerializeField] private int meleeDamage;
+    private int RaycastMask;
     // Use this for initialization
 	void Start () {
 	    LastShotTime = Time.time;
+	    flashTime = 0.1f;
+	    RaycastMask = 1 << LayerMask.NameToLayer("Inner Walls") | 1 << LayerMask.NameToLayer("Outer Walls") |
+	                  1 << LayerMask.NameToLayer("Player");
 	}
 
     public float LastShotTime { get; set; }
@@ -25,17 +30,31 @@ public class Enemy : Character{
 	        body.velocity = speed * (player.transform.position - transform.position).normalized;
 	    }
 
-
-	    if (LastShotTime + shootDelay < Time.time) {
-	        LastShotTime = Time.time;
-	        Bullet shot = Instantiate(bullet, transform);
-            shot.transform.localPosition = Vector3.zero;
-	        shot.direction = (PlayerController.GetPlayerController().transform.position - transform.position).normalized * bullet.speed;
+	    if (bullet != null) {
+	        if (LastShotTime + shootDelay < Time.time) {
+	            RaycastHit2D raycast = Physics2D.Raycast(transform.position, player.transform.position - transform.position,
+	                float.MaxValue, RaycastMask);
+	            Debug.DrawLine(transform.position, raycast.point, Color.red);
+	            Debug.Log(raycast.collider.name);
+	            if (raycast.collider.tag.Equals("Player")) {
+	                LastShotTime = Time.time;
+	                Vector2 shotDirection =
+	                    (PlayerController.GetPlayerController().transform.position - transform.position).normalized *
+	                    bullet.speed;
+	                Bullet shot = Bullet.FireBullet(shotDirection, transform, bullet);
+	            }
+	        }
 	    }
 
 	}
     public override void Die() {
         Destroy(transform.parent.gameObject);
+    }
+
+    public void OnCollisionStay2D(Collision2D other) {
+        if (other.gameObject.tag.Equals("Player")) { 
+            PlayerController.GetPlayerController().takeDamage(meleeDamage);
+        }
     }
 
 }

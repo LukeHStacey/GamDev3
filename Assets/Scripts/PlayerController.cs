@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerController : Character{
 	public float speed = 3;
     public float shootDelay;
     private float lastShotTime;
+    private int maxhealth = 10;
     [SerializeField]
     private PlayerBullet bulletPrefab;
+
+    [SerializeField] private Slider healthBar;
+
 
 	static PlayerController _PlayerController;
     private bool dead;
@@ -22,6 +27,9 @@ public class PlayerController : Character{
 	void Start () {
 	    lastShotTime = -shootDelay;
 	    dead = false;
+	    healthBar.maxValue = maxhealth;
+	    healthBar.minValue = 0;
+	    healthBar.value = health;
 	}
 	
 	// Update is called once per frame
@@ -49,26 +57,27 @@ public class PlayerController : Character{
 	            bool shooting = false;
 	            if (Input.GetKey(KeyCode.LeftArrow)) {
 	                bulletDirection.x = -1;
+	                bulletDirection.y = velocity.y;
 	                shooting = true;
 	            }
 	            else if (Input.GetKey(KeyCode.RightArrow)) {
 	                bulletDirection.x = +1;
+	                bulletDirection.y = velocity.y;
 	                shooting = true;
-	            }
-	            if (Input.GetKey(KeyCode.UpArrow)) {
+	            }else if (Input.GetKey(KeyCode.UpArrow)) {
 	                bulletDirection.y = 1;
+	                bulletDirection.x = velocity.x;
 	                shooting = true;
 	            }
 	            else if (Input.GetKey(KeyCode.DownArrow)) {
 	                bulletDirection.y = -1;
+	                bulletDirection.x = velocity.x;
 	                shooting = true;
 	            }
 
 	            if (shooting) {
 	                lastShotTime = Time.time;
-	                PlayerBullet bullet = Instantiate(bulletPrefab, transform);
-	                bullet.transform.localPosition = Vector3.zero;
-	                bullet.direction = bulletDirection.normalized * bullet.speed + velocity.normalized * speed;
+	                PlayerBullet bullet = Bullet.FireBullet(bulletDirection, transform, bulletPrefab);
 	            }
 	        }
 	    }
@@ -87,5 +96,11 @@ public class PlayerController : Character{
 
     public override void Die() {
         dead = true;
+        healthBar.fillRect.GetComponent<Image>().color = Color.red;
+    }
+
+    protected override void onTakeDamage(int amount) {
+        healthBar.value = health;
+        base.onTakeDamage(amount);
     }
 }

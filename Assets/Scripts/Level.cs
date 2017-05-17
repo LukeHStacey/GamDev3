@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Level : MonoBehaviour {
     [SerializeField]
@@ -25,21 +26,33 @@ public class Level : MonoBehaviour {
     public Level prefab { get; set; }
     public Vector2 position { get; set; }
 
-    private Vector2[] directions = new Vector2[4] { Vector2.up, Vector2.right, Vector2.down, Vector2.left};
+    private Vector2[] directions = new Vector2[4] { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
     // Use this for initialization
     void Start() {
-        GenerateLevel();
     }
 
-    private void GenerateLevel() {
-        GenerateWalls();
-        GenerateFloor();
-        GenerateTeleports();
+    public static Level GenerateLevel(Level prefab, Vector2 position, float difficulty) {
+        Level currentLevel = Instantiate(prefab);
+        currentLevel.prefab = prefab;
+        currentLevel.position = position;
+        currentLevel.GenerateWalls();
+        currentLevel.GenerateFloor();
+        currentLevel.GenerateTeleports();
+
+        SpawnPoint[] spawnPoints = currentLevel.GetComponentsInChildren<SpawnPoint>();
+        Debug.Log(spawnPoints.Length);
+        for(int i = 0; i < spawnPoints.Length; i++) {
+            if(Random.Range(0f, 1f) > difficulty) {
+                Destroy(spawnPoints[i].gameObject);
+            }
+        }
+        return currentLevel;
     }
+
 
     private void GenerateFloor() {
-        for (float x = -(dimensions.x - 3) / 2; x <= (dimensions.x - 3) / 2; x++) {
-            for (float y = -(dimensions.y - 3) / 2; y <= (dimensions.y - 3) / 2; y++) {
+        for(float x = -(dimensions.x - 3) / 2; x <= (dimensions.x - 3) / 2; x++) {
+            for(float y = -(dimensions.y - 3) / 2; y <= (dimensions.y - 3) / 2; y++) {
                 GameObject floorPiece = Instantiate(floor[0], transform);
                 floorPiece.transform.localPosition = new Vector2(x, y);
             }
@@ -47,17 +60,17 @@ public class Level : MonoBehaviour {
     }
 
     private void GenerateWalls() {
-        for (int i = 0; i < 4; i++) {
+        for(int i = 0; i < 4; i++) {
             //Place Corners
             GameObject corner = Instantiate(corners[i], transform);
-            corner.transform.localPosition = CombineVectors(directions[i] + directions[(i+1)%4], (dimensions - Vector2.one)/2);
+            corner.transform.localPosition = CombineVectors(directions[i] + directions[(i + 1) % 4], (dimensions - Vector2.one) / 2);
 
 
             //Place Walls
-            Vector2 wallPos = CombineVectors(directions[i], (dimensions - Vector2.one)/2);
+            Vector2 wallPos = CombineVectors(directions[i], (dimensions - Vector2.one) / 2);
             Vector2 wallDirection = directions[(i + 1) % 4];
-            int wallLength = (int) wallPos.magnitude - 1;
-            for (int j = -wallLength; j <= wallLength; j++) {
+            int wallLength = (int) CombineVectors(wallDirection, dimensions).magnitude / 2 - 1;
+            for(int j = -wallLength; j <= wallLength; j++) {
                 GameObject wall = Instantiate(walls[i], transform);
                 wall.transform.localPosition = wallPos + j * wallDirection;
             }
@@ -85,10 +98,10 @@ public class Level : MonoBehaviour {
 
     void GenerateTeleports() {
         foreach(Vector2 direction in directions) {
-            Teleporter tele = Instantiate(teleporterPrefab, this.transform);
+            Teleporter tele = Instantiate(teleporterPrefab, transform);
             tele.level = this;
             tele.direction = direction;
-            tele.transform.localPosition = CombineVectors(direction, (dimensions - Vector2.one)/2);
+            tele.transform.localPosition = CombineVectors(direction, (dimensions - Vector2.one) / 2);
         }
     }
 
@@ -104,5 +117,9 @@ public class Level : MonoBehaviour {
 
     public override String ToString() {
         return "Level: " + position.ToString();
+    }
+
+    public Vector2 getTeleportPosition(Vector2 direction) {
+        return CombineVectors(direction, (dimensions - Vector2.one) / 2);
     }
 }

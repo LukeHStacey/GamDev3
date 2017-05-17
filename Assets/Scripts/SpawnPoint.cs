@@ -7,7 +7,7 @@ public class SpawnPoint : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	    Enemy e = Instantiate(enemies[0], transform);
+	    Enemy e = Instantiate(enemies[Random.Range(0, enemies.Length)], transform);
         e.transform.localPosition = Vector3.zero;
 	}
 	
@@ -15,4 +15,5 @@ public class SpawnPoint : MonoBehaviour {
 	void Update () {
 		
 	}
+
 }

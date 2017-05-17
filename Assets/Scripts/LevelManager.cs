@@ -14,6 +14,7 @@ public class LevelManager : MonoBehaviour {
     private Level startingRoom;
     private Level currentLevel;
     private Dictionary<Vector2, Level> levels;
+    private int gaurnteedBoss = 10;
     void Awake() {
         LevelManager._LevelManager = this;
     }
@@ -21,8 +22,9 @@ public class LevelManager : MonoBehaviour {
     // Use this for initialization
     void Start() {
         levels = new Dictionary<Vector2, Level>();
-        GenerateLevel(startingRoom, new Vector2(0, 0));
+        currentLevel = Level.GenerateLevel(startingRoom, Vector2.zero, 0);
 
+        levels.Add(Vector2.zero, currentLevel);
 
     }
 
@@ -35,23 +37,17 @@ public class LevelManager : MonoBehaviour {
         return _LevelManager;
     }
 
-    private void GenerateLevel(Level prefab, Vector2 position) {
-        currentLevel = Instantiate(prefab);
-        currentLevel.prefab = prefab;
-        currentLevel.position = position;
-        levels.Add(position, currentLevel);
+    private void GetNextLevel(Vector2 position) {
+        int room = GetObjectByDifficulty(position.magnitude, levelPrefabs.Length);
+        currentLevel = Level.GenerateLevel(levelPrefabs[room], position, position.magnitude/gaurnteedBoss);
     }
 
-    private void GetNextLevel(Vector2 position) {
+    private int GetObjectByDifficulty(float difficulty, int length) {
         //Variance of room allowed
-        float roomRange = levelPrefabs.Length * 0.2f;
+        float roomRange = length * 0.2f;
         //Number of room until gaurenteed Boss
-        int gaurnteedBoss = 10;
-        float lowerLim = (position.magnitude * (levelPrefabs.Length)) / gaurnteedBoss;
-
-        int room = (int) Mathf.Clamp(Mathf.Floor(Random.Range(lowerLim, lowerLim + roomRange)), 0, levelPrefabs.Length);
-
-        GenerateLevel(levelPrefabs[room], position);
+        float lowerLim = (difficulty * (length)) / gaurnteedBoss;
+        return (int) Mathf.Clamp(Mathf.Floor(Random.Range(lowerLim, lowerLim + roomRange)), 0, levelPrefabs.Length-1);
     }
 
     public void EnterRoom(Vector2 direction, Vector2 roomPosition) {
@@ -66,7 +62,13 @@ public class LevelManager : MonoBehaviour {
         }
 
         Transform player = PlayerController.GetPlayerController().transform;
-        player.position = -(Vector2) player.position;// + direction;
+        player.position = currentLevel.getTeleportPosition(-direction) + direction * 0.15f; 
+
+
+        float red = 1 - (gaurnteedBoss - roomPosition.magnitude) / gaurnteedBoss;
+        float green = 1 - red;
+        Color bgColor = new Color(red, green, 0);
+        Background.GetBackground().GetComponent<SpriteRenderer>().color = bgColor;
     }
 
     void OnGUI() {

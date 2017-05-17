@@ -5,15 +5,24 @@ using UnityEngine;
 public class Bullet : MonoBehaviour {
 
     public float speed;
-    public float damage;
+    public int damage;
     private Vector2 lastpos;
+
 
     public Vector2 direction { get; set; }
 
 	// Use this for initialization
 	void Start () {
-	    lastpos = transform.parent.position;
+        transform.localPosition = Vector2.zero;
 	}
+
+    public static B FireBullet<B>(Vector2 direction, Transform Shooter, B prefab) where B:Bullet {
+        direction.Normalize();
+        B bullet = Instantiate(prefab, Shooter);
+        bullet.lastpos = (Vector2) Shooter.position + direction/3;
+        bullet.direction = direction* bullet.speed;
+        return bullet;
+    }
 	
 	// Update is called once per frame
 	void Update () {
