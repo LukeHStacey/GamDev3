@@ -4,9 +4,21 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour {
 
-    public float health;
+    [SerializeField]
+    protected int health;
     public float LastHit = 0;
     protected float flashTime = 0.2f;
+    public float shootDelay;
+    public float speed;
+    [SerializeField]
+    protected Bullet bulletPrefab;
+    [SerializeField] protected List<BulletModifier> modifiers;
+
+    void Start() {
+        foreach (BulletModifier bulletModifier in modifiers) {
+            bulletModifier.OnApply(this);
+        }
+    }
 
     public void OnUpdate() {
         if(LastHit + flashTime < Time.time) {

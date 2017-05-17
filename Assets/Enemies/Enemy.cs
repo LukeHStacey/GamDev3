@@ -4,16 +4,8 @@ using UnityEditor;
 using UnityEngine;
 
 public class Enemy : Character {
-    public float speed;
-    [SerializeField]
-    private float shootDelay;
-    [SerializeField]
-    private Bullet bullet;
     [SerializeField]
     private int meleeDamage;
-    [SerializeField]
-    private BulletModifier[] _modifiers;
-    private List<BulletModifier> modifiers;
     private int RaycastMask;
     // Use this for initialization
     void Start() {
@@ -22,10 +14,6 @@ public class Enemy : Character {
         RaycastMask = 1 << LayerMask.NameToLayer("Inner Walls") | 1 << LayerMask.NameToLayer("Outer Walls") |
                       1 << LayerMask.NameToLayer("Player");
 
-        modifiers = new List<BulletModifier>(_modifiers.Length);
-        foreach(BulletModifier modifier in _modifiers) {
-            modifiers.Add(modifier);
-        }
     }
 
     public float LastShotTime { get; set; }
@@ -40,7 +28,7 @@ public class Enemy : Character {
             body.velocity = speed * (player.transform.position - transform.position).normalized;
         }
 
-        if(bullet != null) {
+        if(bulletPrefab != null) {
             if(LastShotTime + shootDelay < Time.time) {
                 RaycastHit2D raycast = Physics2D.Raycast(transform.position, player.transform.position - transform.position,
                     float.MaxValue, RaycastMask);
@@ -50,8 +38,8 @@ public class Enemy : Character {
                     LastShotTime = Time.time;
                     Vector2 shotDirection =
                         (PlayerController.GetPlayerController().transform.position - transform.position).normalized *
-                        bullet.speed;
-                    Bullet shot = Bullet.FireBullet(shotDirection, transform, bullet);
+                        bulletPrefab.speed;
+                    Bullet shot = Bullet.FireBullet(shotDirection, transform, bulletPrefab);
                     foreach(BulletModifier modifier in modifiers) {
                         shot = modifier.OnFireBullet(shot);
                     }

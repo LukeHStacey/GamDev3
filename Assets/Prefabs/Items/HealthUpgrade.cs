@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponUpgrade : Item {
-    [SerializeField] private BulletModifier upgrade;
+public class HealthUpgrade : Item{
+
     public override void pickedUp(PlayerController playerController) {
-        playerController.addBulletModifier(upgrade);
-        upgrade.OnApply(playerController);
+        playerController.MaxHealth = playerController.MaxHealth + 2;
+        playerController.Health = playerController.Health + 2;
         base.pickedUp(playerController);
-        
     }
 }

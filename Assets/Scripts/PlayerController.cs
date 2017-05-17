@@ -5,23 +5,27 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayerController : Character{
-	public float speed = 3;
-    public float shootDelay;
     private float lastShotTime;
-    private int maxhealth = 10;
     [SerializeField]
-    private PlayerBullet bulletPrefab;
-    private List<BulletModifier> modifiers;
-
-    [SerializeField] private Slider healthBar;
+    private int maxHealth = 10;
+    private Healthbar healthBar;
 
 
 	static PlayerController _PlayerController;
     private bool dead;
 
+    public int MaxHealth {
+        get { return maxHealth; }
+         set { maxHealth = value; healthBar.UpdateHealth(health, maxHealth); }
+    }
+
+    public int Health {
+        get { return health; }
+         set { health = value; healthBar.UpdateHealth(health, maxHealth); }
+    }
+
     void Awake(){
 		PlayerController._PlayerController = this;
-        modifiers = new List<BulletModifier>();
 	}
 
 
@@ -29,9 +33,7 @@ public class PlayerController : Character{
 	void Start () {
 	    lastShotTime = -shootDelay;
 	    dead = false;
-	    healthBar.maxValue = maxhealth;
-	    healthBar.minValue = 0;
-	    healthBar.value = health;
+        healthBar = Healthbar.HPBar;
 	}
 	
 	// Update is called once per frame
@@ -79,7 +81,7 @@ public class PlayerController : Character{
 
 	            if (shooting) {
 	                lastShotTime = Time.time;
-	                PlayerBullet bullet = Bullet.FireBullet(bulletDirection, transform, bulletPrefab);
+	                Bullet bullet = Bullet.FireBullet(bulletDirection, transform, bulletPrefab);
 	                foreach (BulletModifier bulletModifier in modifiers) {
 	                    bullet = bulletModifier.OnFireBullet(bullet);
 	                }
@@ -101,13 +103,13 @@ public class PlayerController : Character{
 
     public override void Die() {
         dead = true;
-        healthBar.fillRect.GetComponent<Image>().color = Color.red;
     }
 
     protected override void onTakeDamage(int amount) {
-        healthBar.value = health;
         base.onTakeDamage(amount);
+        healthBar.UpdateHealth(health, MaxHealth);
     }
+
 
     public void addBulletModifier(BulletModifier modifier) {
         modifiers.Add(modifier);

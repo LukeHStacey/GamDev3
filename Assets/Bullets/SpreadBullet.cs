@@ -13,4 +13,8 @@ public class SpreadBullet : BulletModifier {
         Bullet.FireBullet(direction3, b.transform.parent, b);
         return b;
     }
+
+    public override void OnApply(Character c) {
+        c.shootDelay = c.shootDelay * 2;
+    }
 }

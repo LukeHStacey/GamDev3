@@ -7,4 +7,7 @@ public abstract class BulletModifier : MonoBehaviour {
     public virtual B OnFireBullet<B>(B b) where B:Bullet {
         return b;
     }
+
+    public virtual void OnApply(Character c) {
+    }
 }
