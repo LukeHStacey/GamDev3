@@ -11,6 +11,7 @@ public class PlayerController : Character{
     private int maxhealth = 10;
     [SerializeField]
     private PlayerBullet bulletPrefab;
+    private List<BulletModifier> modifiers;
 
     [SerializeField] private Slider healthBar;
 
@@ -20,6 +21,7 @@ public class PlayerController : Character{
 
     void Awake(){
 		PlayerController._PlayerController = this;
+        modifiers = new List<BulletModifier>();
 	}
 
 
@@ -78,6 +80,9 @@ public class PlayerController : Character{
 	            if (shooting) {
 	                lastShotTime = Time.time;
 	                PlayerBullet bullet = Bullet.FireBullet(bulletDirection, transform, bulletPrefab);
+	                foreach (BulletModifier bulletModifier in modifiers) {
+	                    bullet = bulletModifier.OnFireBullet(bullet);
+	                }
 	            }
 	        }
 	    }
@@ -103,4 +108,9 @@ public class PlayerController : Character{
         healthBar.value = health;
         base.onTakeDamage(amount);
     }
+
+    public void addBulletModifier(BulletModifier modifier) {
+        modifiers.Add(modifier);
+    }
+
 }

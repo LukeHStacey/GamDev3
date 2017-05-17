@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SpawnPoint : MonoBehaviour {
-    [SerializeField] private Enemy[] enemies;
 
 	// Use this for initialization
 	void Start () {
-	    Enemy e = Instantiate(enemies[Random.Range(0, enemies.Length)], transform);
+	    float difficulty = GetComponentInParent<Level>().difficulty;
+	    Enemy e = Instantiate(EnemyManager.Manager.GetEnemyByDifficulty(difficulty) , transform);
         e.transform.localPosition = Vector3.zero;
 	}
 	

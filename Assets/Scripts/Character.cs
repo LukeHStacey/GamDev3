@@ -20,7 +20,7 @@ public abstract class Character : MonoBehaviour {
 
 
     public virtual void takeDamage(int damage) {
-        if (LastHit + flashTime < Time.time) {
+        if (LastHit + flashTime < Time.time && damage > 0) {
             onTakeDamage(damage);
         }
     }

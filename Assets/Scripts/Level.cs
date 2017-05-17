@@ -16,6 +16,8 @@ public class Level : MonoBehaviour {
     [SerializeField]
     private float x, y;
 
+    [SerializeField] private GameObject _floor;
+
     public Vector2 dimensions {
         get { return new Vector2(x, y); }
         set {
@@ -23,8 +25,21 @@ public class Level : MonoBehaviour {
             y = value.y;
         }
     }
+    public float difficulty { get; private set; }
     public Level prefab { get; set; }
     public Vector2 position { get; set; }
+
+    private int _enimies;
+    public int Enemies {
+        get { return _enimies; }
+        set {
+            if (value == 0 && _enimies != 0) {
+                Debug.Log("Spawning an Item!");
+                Instantiate(ItemManager.Manager.GetItem(), transform);
+            }
+            _enimies = Math.Max(value, 0);
+        }
+    }
 
     private Vector2[] directions = new Vector2[4] { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
     // Use this for initialization
@@ -35,25 +50,34 @@ public class Level : MonoBehaviour {
         Level currentLevel = Instantiate(prefab);
         currentLevel.prefab = prefab;
         currentLevel.position = position;
-        currentLevel.GenerateWalls();
-        currentLevel.GenerateFloor();
-        currentLevel.GenerateTeleports();
+        currentLevel.difficulty = difficulty;
+        currentLevel.Generate();
 
         SpawnPoint[] spawnPoints = currentLevel.GetComponentsInChildren<SpawnPoint>();
-        Debug.Log(spawnPoints.Length);
+
+         int enemies = spawnPoints.Length;
         for(int i = 0; i < spawnPoints.Length; i++) {
             if(Random.Range(0f, 1f) > difficulty) {
                 Destroy(spawnPoints[i].gameObject);
+                enemies--;
             }
         }
+        currentLevel.Enemies = enemies;
         return currentLevel;
+    }
+
+    private void Generate() {
+        _floor = new GameObject();
+        GenerateWalls();
+        GenerateFloor();
+        GenerateTeleports();
     }
 
 
     private void GenerateFloor() {
         for(float x = -(dimensions.x - 3) / 2; x <= (dimensions.x - 3) / 2; x++) {
             for(float y = -(dimensions.y - 3) / 2; y <= (dimensions.y - 3) / 2; y++) {
-                GameObject floorPiece = Instantiate(floor[0], transform);
+                GameObject floorPiece = Instantiate(floor[0], _floor.transform);
                 floorPiece.transform.localPosition = new Vector2(x, y);
             }
         }
@@ -62,7 +86,7 @@ public class Level : MonoBehaviour {
     private void GenerateWalls() {
         for(int i = 0; i < 4; i++) {
             //Place Corners
-            GameObject corner = Instantiate(corners[i], transform);
+            GameObject corner = Instantiate(corners[i], _floor.transform);
             corner.transform.localPosition = CombineVectors(directions[i] + directions[(i + 1) % 4], (dimensions - Vector2.one) / 2);
 
 
@@ -71,7 +95,7 @@ public class Level : MonoBehaviour {
             Vector2 wallDirection = directions[(i + 1) % 4];
             int wallLength = (int) CombineVectors(wallDirection, dimensions).magnitude / 2 - 1;
             for(int j = -wallLength; j <= wallLength; j++) {
-                GameObject wall = Instantiate(walls[i], transform);
+                GameObject wall = Instantiate(walls[i], _floor.transform);
                 wall.transform.localPosition = wallPos + j * wallDirection;
             }
 
@@ -83,9 +107,7 @@ public class Level : MonoBehaviour {
         foreach(Transform child in transform) {
             child.gameObject.SetActive(true);
         }
-        GenerateFloor();
-        GenerateWalls();
-        GenerateTeleports();
+        Generate();
 
     }
 
@@ -93,12 +115,13 @@ public class Level : MonoBehaviour {
         foreach(Transform child in transform) {
             child.gameObject.SetActive(false);
         }
+        Destroy(_floor.gameObject);
 
     }
 
     void GenerateTeleports() {
         foreach(Vector2 direction in directions) {
-            Teleporter tele = Instantiate(teleporterPrefab, transform);
+            Teleporter tele = Instantiate(teleporterPrefab, _floor.transform);
             tele.level = this;
             tele.direction = direction;
             tele.transform.localPosition = CombineVectors(direction, (dimensions - Vector2.one) / 2);

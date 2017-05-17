@@ -9,7 +9,7 @@ public class Bullet : MonoBehaviour {
     private Vector2 lastpos;
 
 
-    public Vector2 direction { get; set; }
+    public Vector2 direction { get; private set; }
 
 	// Use this for initialization
 	void Start () {
