@@ -8,11 +8,12 @@ public class SniperUpgrade : BulletModifier{
         b.damage = b.damage * 4;
         b.speed = b.speed * 4;
         b.transform.localScale = 0.5f * b.transform.localScale;
+        b.reloadTime = b.reloadTime * 2;
 
         return b;
     }
 
-    public override void OnApply(Character c) {
-        c.shootDelay = c.shootDelay * 2;
+    public override string GetToolTip() {
+        return "+ Sniper Mode";
     }
 }

@@ -2,19 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpreadBullet : BulletModifier {
+public class SpreadBullet : ShapeModifier {
 
-    public override B OnFireBullet<B>(B b) {
+    public override List<B> OnFireBullet<B>(List<B> bulletList) {
+        List<Bullet> newBullets = new List<Bullet>();
 
-        Vector2 direction2 = Quaternion.Euler(0, 0, 15) * b.direction;
-        Vector2 direction3 = Quaternion.Euler(0, 0, -15) * b.direction;
+        foreach (B bullet in bulletList) {
+            
+        Vector2 direction2 = Quaternion.Euler(0, 0, 15) * bullet.direction;
+        Vector2 direction3 = Quaternion.Euler(0, 0, -15) * bullet.direction;
 
-        Bullet.FireBullet(direction2, b.transform.parent, b);
-        Bullet.FireBullet(direction3, b.transform.parent, b);
-        return b;
+        bullet.reloadTime = bullet.reloadTime * 2;
+        Bullet.FireBullet(direction2, bullet.transform.parent, bullet);
+        Bullet.FireBullet(direction3, bullet.transform.parent, bullet);
+
+        }
+        return bulletList;
+    }
+    public override string GetToolTip() {
+        return "+ Shots Fired";
     }
 
-    public override void OnApply(Character c) {
-        c.shootDelay = c.shootDelay * 2;
-    }
 }

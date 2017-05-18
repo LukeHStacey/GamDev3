@@ -19,7 +19,7 @@ public class PlayerController : Character{
          set { maxHealth = value; healthBar.UpdateHealth(health, maxHealth); }
     }
 
-    public int Health {
+    public float Health {
         get { return health; }
          set { health = Mathf.Min(value, MaxHealth); healthBar.UpdateHealth(health, maxHealth); }
     }
@@ -31,7 +31,6 @@ public class PlayerController : Character{
 
 	// Use this for initialization
 	void Start () {
-	    lastShotTime = -shootDelay;
 	    dead = false;
         healthBar = Healthbar.HPBar;
 	}
@@ -82,9 +81,10 @@ public class PlayerController : Character{
 	            if (shooting) {
 	                lastShotTime = Time.time;
 	                Bullet bullet = Bullet.FireBullet(bulletDirection, transform, bulletPrefab);
-	                foreach (BulletModifier bulletModifier in modifiers) {
+	                foreach (BulletModifier bulletModifier in bulletModifiers) {
 	                    bullet = bulletModifier.OnFireBullet(bullet);
 	                }
+	                shootDelay = bullet.reloadTime;
 	            }
 	        }
 	    }
@@ -105,14 +105,19 @@ public class PlayerController : Character{
         dead = true;
     }
 
-    protected override void onTakeDamage(int amount) {
+    protected override void onTakeDamage(float amount) {
         base.onTakeDamage(amount);
         healthBar.UpdateHealth(health, MaxHealth);
     }
 
 
     public void addBulletModifier(BulletModifier modifier) {
-        modifiers.Add(modifier);
+        bulletModifiers.Add(modifier);
     }
 
+    public void OnEnterRoom() {
+        foreach(Transform child in transform) {
+            Destroy(child.gameObject);           
+        }
+    }
 }

@@ -9,7 +9,6 @@ public class Enemy : Character {
     private int RaycastMask;
     // Use this for initialization
     void Start() {
-        LastShotTime = Time.time;
         flashTime = 0.1f;
         RaycastMask = 1 << LayerMask.NameToLayer("Inner Walls") | 1 << LayerMask.NameToLayer("Outer Walls") |
                       1 << LayerMask.NameToLayer("Player");
@@ -40,9 +39,10 @@ public class Enemy : Character {
                         (PlayerController.GetPlayerController().transform.position - transform.position).normalized *
                         bulletPrefab.speed;
                     Bullet shot = Bullet.FireBullet(shotDirection, transform, bulletPrefab);
-                    foreach(BulletModifier modifier in modifiers) {
+                    foreach(BulletModifier modifier in bulletModifiers) {
                         shot = modifier.OnFireBullet(shot);
                     }
+                    shootDelay = shot.reloadTime;
                 }
             }
         }

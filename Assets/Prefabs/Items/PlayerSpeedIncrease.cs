@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealthUpgrade : Item{
+public class PlayerSpeedIncrease : Item{
 
     void Start() {
-        text = "+ Max Health";
+        text = "+ Move Speed";
     }
     public override void pickedUp(PlayerController playerController) {
-        playerController.MaxHealth = playerController.MaxHealth + 2;
-        playerController.Health = playerController.Health + 2;
+        playerController.speed += 1;
         base.pickedUp(playerController);
     }
+
+    // Use this for initialization
 }

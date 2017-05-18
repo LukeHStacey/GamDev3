@@ -5,19 +5,19 @@ using UnityEngine;
 public abstract class Character : MonoBehaviour {
 
     [SerializeField]
-    protected int health;
+    protected float health;
     public float LastHit = 0;
     protected float flashTime = 0.2f;
     public float shootDelay;
     public float speed;
+    public float damageReduction;
     [SerializeField]
     protected Bullet bulletPrefab;
-    [SerializeField] protected List<BulletModifier> modifiers;
+    [SerializeField] protected List<BulletModifier> bulletModifiers;
+    [SerializeField] protected List<ShapeModifier> ShapeModifiers;
 
     void Start() {
-        foreach (BulletModifier bulletModifier in modifiers) {
-            bulletModifier.OnApply(this);
-        }
+        shootDelay = 0; 
     }
 
     public void OnUpdate() {
@@ -31,13 +31,14 @@ public abstract class Character : MonoBehaviour {
     }
 
 
-    public virtual void takeDamage(int damage) {
+    public virtual void takeDamage(float damage) {
+        damage = damage - damageReduction;
         if (LastHit + flashTime < Time.time && damage > 0) {
             onTakeDamage(damage);
         }
     }
 
-    protected virtual void onTakeDamage(int amount) {
+    protected virtual void onTakeDamage(float amount) {
         health -= amount;
         if(health <= 0) {
             this.Die();

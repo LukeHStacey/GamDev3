@@ -22,9 +22,9 @@ public class Healthbar : MonoBehaviour {
         UpdateHealth(startingMaxHealth, startingMaxHealth);
     }
 
-    public void UpdateHealth(int health, int maxHealth) {
+    public void UpdateHealth(float health, int maxHealth) {
 
-        if(health == 0)
+        if(health <= 0)
             slider.fillRect.GetComponent<Image>().color = Color.red;
         slider.value = health;
 

@@ -62,6 +62,7 @@ public class LevelManager : MonoBehaviour {
         }
 
         Transform player = PlayerController.GetPlayerController().transform;
+        PlayerController.GetPlayerController().OnEnterRoom();
         player.position = currentLevel.getTeleportPosition(-direction) + direction * 0.15f; 
 
 
