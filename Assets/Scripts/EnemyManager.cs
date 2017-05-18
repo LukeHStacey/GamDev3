@@ -28,7 +28,7 @@ public class EnemyManager : MonoBehaviour {
         //Variance of room allowed
         float roomRange = length * 0.5f;
         //Number of room until gaurenteed Boss
-        float lowerLim = -3 + (difficulty * (length));
+        float lowerLim = -3 + (difficulty * (length+3));
         return (int) Mathf.Clamp(Mathf.Floor(Random.Range(lowerLim, lowerLim + roomRange)), 0, Enimies.Length-1);
     }
 

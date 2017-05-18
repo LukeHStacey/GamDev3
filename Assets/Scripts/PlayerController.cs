@@ -21,7 +21,7 @@ public class PlayerController : Character{
 
     public int Health {
         get { return health; }
-         set { health = value; healthBar.UpdateHealth(health, maxHealth); }
+         set { health = Mathf.Min(value, MaxHealth); healthBar.UpdateHealth(health, maxHealth); }
     }
 
     void Awake(){
