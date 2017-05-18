@@ -28,7 +28,7 @@ public class Bullet : MonoBehaviour {
     void Awake() {
         tagToHit = "Player";
     }
-	void Start () {
+	public virtual void Start () {
         transform.localPosition = Vector2.zero;
 	    wallMask = 1 << LayerMask.NameToLayer("Inner Walls") | 1 << LayerMask.NameToLayer("Outer Walls");
         enemyMask = 1 << LayerMask.NameToLayer("Enemies");
@@ -79,7 +79,7 @@ public class Bullet : MonoBehaviour {
 
             Destroy(gameObject);
         }else if (other.tag.Equals("Wall")) {
-            if (false && canBounce) {
+            if ( canBounce) {
                 foreach (Vector2 cardinal in directions) {
                     RaycastHit2D ray = Physics2D.Raycast(lastpos, direction, float.MaxValue, wallMask);
                     if (ray && ray.collider == other) {

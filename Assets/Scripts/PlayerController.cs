@@ -117,6 +117,8 @@ public class PlayerController : Character{
     }
 
     public void addShapeModifier(ShapeModifier shapeUpgrade) {
-        shapeModifiers.Add(shapeUpgrade.GetPriority(), shapeUpgrade);
+        if (!shapeModifiers.ContainsKey(shapeUpgrade.GetPriority())) {
+            shapeModifiers.Add(shapeUpgrade.GetPriority(), shapeUpgrade);
+        }
     }
 }
