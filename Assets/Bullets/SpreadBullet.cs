@@ -23,4 +23,7 @@ public class SpreadBullet : ShapeModifier {
         return "+ Shots Fired";
     }
 
+    public override int GetPriority() {
+        return 100;
+    }
 }

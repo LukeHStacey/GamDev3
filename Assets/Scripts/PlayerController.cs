@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayerController : Character{
-    private float lastShotTime;
     [SerializeField]
     private int maxHealth = 10;
     private Healthbar healthBar;
@@ -30,7 +29,8 @@ public class PlayerController : Character{
 
 
 	// Use this for initialization
-	void Start () {
+    public override void  Start () {
+        base.Start();
 	    dead = false;
         healthBar = Healthbar.HPBar;
 	}
@@ -79,12 +79,7 @@ public class PlayerController : Character{
 	            }
 
 	            if (shooting) {
-	                lastShotTime = Time.time;
-	                Bullet bullet = Bullet.FireBullet(bulletDirection, transform, bulletPrefab);
-	                foreach (BulletModifier bulletModifier in bulletModifiers) {
-	                    bullet = bulletModifier.OnFireBullet(bullet);
-	                }
-	                shootDelay = bullet.reloadTime;
+                    Shoot(bulletDirection);
 	            }
 	        }
 	    }
@@ -119,5 +114,9 @@ public class PlayerController : Character{
         foreach(Transform child in transform) {
             Destroy(child.gameObject);           
         }
+    }
+
+    public void addShapeModifier(ShapeModifier shapeUpgrade) {
+        shapeModifiers.Add(shapeUpgrade.GetPriority(), shapeUpgrade);
     }
 }

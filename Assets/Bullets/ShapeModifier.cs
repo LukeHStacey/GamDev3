@@ -8,4 +8,5 @@ public abstract class ShapeModifier : MonoBehaviour {
         return b;
     }
     public abstract string GetToolTip();
+    public abstract int GetPriority();
 }

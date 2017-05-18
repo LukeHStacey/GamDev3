@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour {
 
+    protected float lastShotTime;
     [SerializeField]
     protected float health;
     public float LastHit = 0;
@@ -13,11 +14,14 @@ public abstract class Character : MonoBehaviour {
     public float damageReduction;
     [SerializeField]
     protected Bullet bulletPrefab;
-    [SerializeField] protected List<BulletModifier> bulletModifiers;
-    [SerializeField] protected List<ShapeModifier> ShapeModifiers;
+    [SerializeField]
+    protected List<BulletModifier> bulletModifiers;
+    [SerializeField]
+    protected SortedList<int, ShapeModifier> shapeModifiers;
 
-    void Start() {
-        shootDelay = 0; 
+    public virtual void Start() {
+        shootDelay = 0;
+        shapeModifiers = new SortedList<int, ShapeModifier>();
     }
 
     public void OnUpdate() {
@@ -33,7 +37,7 @@ public abstract class Character : MonoBehaviour {
 
     public virtual void takeDamage(float damage) {
         damage = damage - damageReduction;
-        if (LastHit + flashTime < Time.time && damage > 0) {
+        if(LastHit + flashTime < Time.time && damage > 0) {
             onTakeDamage(damage);
         }
     }
@@ -47,6 +51,20 @@ public abstract class Character : MonoBehaviour {
             GetComponent<SpriteRenderer>().color = Color.red;
             LastHit = Time.time;
         }
+    }
+
+    protected void Shoot(Vector2 direction) {
+        lastShotTime = Time.time;
+        Bullet bullet = Bullet.FireBullet(direction, transform, bulletPrefab);
+        foreach(BulletModifier bulletModifier in bulletModifiers) {
+            bullet = bulletModifier.OnFireBullet(bullet);
+        }
+        List<Bullet> bullets = new List<Bullet>();
+        bullets.Add(bullet);
+        foreach(KeyValuePair<int, ShapeModifier> valuePair in shapeModifiers) {
+            bullets = valuePair.Value.OnFireBullet(bullets);
+        }
+        shootDelay = bullets[0].reloadTime;
     }
 
     public abstract void Die();
