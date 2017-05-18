@@ -84,7 +84,7 @@ public class Bullet : MonoBehaviour {
                     RaycastHit2D ray = Physics2D.Raycast(lastpos, direction, float.MaxValue, wallMask);
                     if (ray && ray.collider == other) {
                         Vector2 newDirection = new Vector2(-Mathf.Abs(cardinal.x), -Mathf.Abs(cardinal.y));
-                        direction = CombineVectors(newDirection, direction);
+                        direction = new Vector2(newDirection.x * direction.x, newDirection.y * direction.y);
                     }
                     else {
                         Debug.Log(ray.collider);
