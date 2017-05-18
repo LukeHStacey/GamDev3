@@ -13,7 +13,7 @@ public class UniversalShot: ShapeModifier{
         Vector2 direction3 = Quaternion.Euler(0, 0, 180) * bullet.direction;
         Vector2 direction4 = Quaternion.Euler(0, 0, 270) * bullet.direction;
 
-        bullet.damage = bullet.damage/3;
+        bullet.damage = bullet.damage*2/3;
         newBullets.Add(Bullet.FireBullet(direction2, bullet.transform.parent, bullet));
         newBullets.Add(Bullet.FireBullet(direction3, bullet.transform.parent, bullet));
         newBullets.Add(Bullet.FireBullet(direction4, bullet.transform.parent, bullet));
