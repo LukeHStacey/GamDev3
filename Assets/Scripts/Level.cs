@@ -69,7 +69,7 @@ public class Level : MonoBehaviour {
     private void Generate() {
         _floor = new GameObject();
         GenerateWalls();
-        GenerateFloor();
+        //GenerateFloor();
         GenerateTeleports();
     }
 
