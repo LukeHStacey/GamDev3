@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerBullet : Bullet {
-    void Start() {
+    public override void Start() {
         tagToHit = "Enemy";
+        base.Start();
     }
 
 }
