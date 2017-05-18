@@ -79,7 +79,7 @@ public class Bullet : MonoBehaviour {
 
             Destroy(gameObject);
         }else if (other.tag.Equals("Wall")) {
-            if (canBounce) {
+            if (false && canBounce) {
                 foreach (Vector2 cardinal in directions) {
                     RaycastHit2D ray = Physics2D.Raycast(lastpos, direction, float.MaxValue, wallMask);
                     if (ray && ray.collider == other) {
